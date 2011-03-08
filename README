@@ -1,0 +1,1 @@
+This repo contains a patch for the ralink kernel module. The patch corrects warnings when compiling the module for ARM processors.
