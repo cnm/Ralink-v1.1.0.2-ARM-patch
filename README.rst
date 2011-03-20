@@ -5,6 +5,8 @@ This repo contains a patch for the ralink rt2501 kernel module. The patch correc
 
 ``Please note that this has not been fully tested.``
 
+It also contains another patch which will add Lalith's code to the driver.
+
 Applying the patch
 ==================
 
