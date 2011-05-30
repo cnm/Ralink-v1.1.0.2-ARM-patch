@@ -1,5 +1,5 @@
 diff --git a/sources/Module/Makefile.6 b/sources/Module/Makefile.6
-index 79b1085..79353a3 100755
+index 79b1085..533892e 100755
 --- a/sources/Module/Makefile.6
 +++ b/sources/Module/Makefile.6
 @@ -23,8 +23,8 @@ CC := /tscrosstool/ts7800-crosstool-linux-gnueabi-2005q3-2-gcc3.4.4/arm-none-lin
@@ -8,8 +8,8 @@ index 79b1085..79353a3 100755
  ifeq ($(TS),7500)
 -KERNEL_SOURCE = /home/workspace/plaquinhas/kernel/linux-2.6.24-cavium
 -CC := /home/workspace/plaquinhas/kernel/arm-uclibc-3.4.6/bin/arm-linux-gcc
-+KERNEL_SOURCE = /home/fred/arm-linux/
-+CC := /home/fred/ts7500_kernel/arm-uclibc-3.4.6/bin/arm-linux-gcc
++KERNEL_SOURCE = /lib/modules/2.6.24.4/build
++CC := $(CROSS_COMPILE)gcc
  endif
  
  ifeq ($(TS),7400-26)
@@ -2355,7 +2355,7 @@ index f06eb4e..1a26a27 100755
  	
  	pUrb = pPsPollContext->pUrb;
 diff --git a/sources/Module/rtusb_data.c b/sources/Module/rtusb_data.c
-index 68700cf..d2eb1d5 100755
+index 68700cf..7cdc045 100755
 --- a/sources/Module/rtusb_data.c
 +++ b/sources/Module/rtusb_data.c
 @@ -1,44 +1,49 @@
@@ -2958,7 +2958,7 @@ index 68700cf..d2eb1d5 100755
 +
 +  iph = ip_hdr(pSkb);
 +  if(iph->protocol == IPPROTO_UDP){
-+    udph = (struct udphdr*) (pSkb->data + (iph->ihl << 2));
++    udph = (struct udphdr*) (((char*) iph) + (iph->ihl << 2));
 +    if(udph->dest == htons(57843)) //I don't like to make this hardcoded, but for now it'll have to do.
 +      store_duration = 1;
 +  }
@@ -2999,7 +2999,7 @@ index 68700cf..d2eb1d5 100755
 +      udph->check = 0xFFFF;
 +
 +    printk("RTS + CTS + DIFS + SIFS = %llu\n", rts_cts_frame_duration);
-+    printk("Total estimated time for packet %u is %llu\n", *(unsigned int*) (((char*) udph) + 24) - 1, total_time);
++    printk("Total estimated time for packet %u is %llu\n", ntohl(*((unsigned int*) (((char*) udph) + 24 + sizeof(struct udphdr)))) - 1, total_time);
 +  }
 +  //===================================================
 +
